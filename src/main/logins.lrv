@@ -1,0 +1,36 @@
+GLOBAL {
+	VARIABLES {
+		
+	}
+	
+	EVENTS {
+		badLogin() = {Runner.badLogin()}
+		goodLogin() = {Runner.goodLogin()}
+		logout() = {Runner.logout()}
+	}
+	
+	PROPERTY logins{
+		STATES {
+			BAD {
+				doubleLogin
+				doubleLogout
+			}
+			NORMAL {
+				loggedIn
+			}
+			STARTING{
+				loggedOut
+			}
+		}
+		
+		TRANSITIONS {
+			loggedOut -> loggedOut [badLogin()\\System.out.println("Unsuccessful Login attempt.");]
+			loggedOut -> loggedIn [goodLogin()\\System.out.println("Successfully Logged In.");]
+			loggedOut -> doubleLogout [logout()\\System.out.println("Double Logout");]
+			
+			loggedIn -> doubleLogin [goodLogin()\\System.out.println("Double Login");]
+			loggedIn -> doubleLogin [badLogin()\\System.out.println("Double Login");]
+			loggedIn -> loggedOut [logout()\\System.out.println("Successfully Logged Out");]
+		}
+	}
+}

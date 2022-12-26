@@ -1,5 +1,6 @@
 package Pages;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -7,11 +8,11 @@ import org.openqa.selenium.support.FindBy;
 //Page object class for the marketAlertUm login page
 public class MarketAlertLogin extends PageObject {
 
-    @FindBy(xpath = "//input[@name='UserId']")
-    private WebElement textInput;
+    //@FindBy(xpath = "//input[@name='UserId']")
+    //private WebElement textInput;
 
-    @FindBy(xpath = "//input[@type='submit']")
-    private WebElement submitButton;
+    //@FindBy(xpath = "//input[@type='submit']")
+    //private WebElement submitButton;
 
 
     public MarketAlertLogin(WebDriver driver){
@@ -20,11 +21,13 @@ public class MarketAlertLogin extends PageObject {
 
     //Enters the given userId in the input field
     public void inputUserId(String userId){
+    	WebElement textInput = driver.findElement(By.xpath("//input[@name='UserId']"));
         textInput.sendKeys(userId);
     }
 
     //Presses the submit button near the input field
     public void submit(){
+    	WebElement submitButton = driver.findElement(By.xpath("//input[@type='submit']"));
         submitButton.click();
     }
 

@@ -1,16 +1,18 @@
-		package main;
+package main;
 
 import Pages.*;
 
-//import org.openqa.selenium.WebDriver;
-//import org.openqa.selenium.WebElement;
-//import org.json.JSONObject;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.net.URI;
-import java.net.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.net.http.HttpRequest.BodyPublishers;
+//import java.net.*;
+//import java.net.HttpClient;
+//import java.net.http.HttpRequest;
+//import java.net.http.HttpResponse;
+//import java.net.http.HttpRequest.BodyPublishers;
 import java.util.List;
 
 public class Runner {
@@ -18,7 +20,7 @@ public class Runner {
 	private WebDriver driver;
 	private MarketAlertLogin marketAlertLogin;
 	private MarketAlertList marketAlertList;
-	
+
 	public Runner(String userId, String chromeDriverPath){
         //set path to ChromeDriver executable
         System.setProperty("webdriver.chrome.driver", chromeDriverPath);
@@ -27,6 +29,40 @@ public class Runner {
 		this.driver = new ChromeDriver();
 		this.marketAlertLogin = new MarketAlertLogin(driver);
 		this.marketAlertList = new MarketAlertList(driver);
+	}
+
+	public void runLogins(){
+        //boolean repeat = true;
+        for(int i=0; i<10; i++){
+		//while(repeat){
+			int action = randomInt(0,3);
+			
+			switch(action){
+                case 0:
+                    goToLoginPage();
+                    goodLogin();
+                    logout();
+                    break;
+                case 1:
+                	goToLoginPage();
+                    badLogin();
+                    logout();
+                    break;
+                /*case 2:
+                	this.driver.quit();
+                    repeat = false;
+                    break;*/
+                    /*
+                case 5:
+                    goToLoginPage();
+                    break;
+                case 6:
+                    goToLoginPage();
+                    break;
+                */
+            }
+		}
+        driver.quit();
 	}
 
 	private void goToLoginPage(){
@@ -43,7 +79,7 @@ public class Runner {
 		login("Bad Id");
 	}
 	
-	// Attempts to log into the syste with the given userId
+	// Attempts to log into the system with the given userId
 	private void login(String userId){
 		marketAlertLogin.inputUserId(userId);
 		marketAlertLogin.submit();
@@ -98,19 +134,23 @@ public class Runner {
         // String userId = getAlphaNumericString(10);
         int priceInCents = randomInt(0, 1000000);
 
-        return createJson(alertType, heading, description, url, imageUrl, null, priceInCents)
+        return createJson(alertType, heading, description, url, imageUrl, this.userId ,priceInCents);
     }
 
     private JSONObject createJson(int alertType, String heading, String description, String url ,String imageUrl, String userId, int priceInCents){
         JSONObject object = new JSONObject();
 
-        object.put("alertType", alertType);
-        object.put("heading", heading);
-        object.put("description", description);
-        object.put("url", url);
-        object.put("imageUrl", imageUrl);
-        object.put("postedBy", userId);
-        object.put("priceInCents", priceInCents);
+        try {
+			object.put("alertType", alertType);
+			object.put("heading", heading);
+	        object.put("description", description);
+	        object.put("url", url);
+	        object.put("imageUrl", imageUrl);
+	        object.put("postedBy", userId);
+	        object.put("priceInCents", priceInCents);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 
         return object;
     }
@@ -120,6 +160,7 @@ public class Runner {
      * Returns the response object
      * In case send fails return null
      */
+    /*
     public HttpResponse postAlert(JSONObject json){
 
         HttpClient client = HttpClient.newHttpClient();
@@ -138,11 +179,12 @@ public class Runner {
         }catch(Exception e){
             return null;    //in case of fail return a null object
         }
-    }
+    }*/
 
     /*
      * Sends a delete request with the given user Id to the marketAlertUm api
      */
+    /*
     public int deleteAlerts(){
         HttpClient client = HttpClient.newHttpClient();
         
@@ -163,7 +205,7 @@ public class Runner {
 
         //return the statuscode of the request
         return response.statusCode();
-    }
+    }*/
 
 	// TODO: MODIFY THIS TO RETURN THE NUMBER OF ALERTS
 	//return a list of alerts that are displayed on marketAlertUM

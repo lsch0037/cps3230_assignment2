@@ -35,6 +35,7 @@ public class MarketAlertList extends PageObject{
     }
 
     // TODO: REPLACE ALL INSTANCES OF getAlerts() WITH THIS
+    /*
     public List<MarketAlertItem> getAlertsAsPageObjects(){
         //refresh to ensure the information is up to date
         driver.navigate().refresh();
@@ -48,7 +49,7 @@ public class MarketAlertList extends PageObject{
         }
 
         return pgObjs;
-    }
+    }*/
 
     // Press the LogOut button
     public void logOut(){
