@@ -13,6 +13,8 @@ import org.json.JSONObject;
 
 
 
+
+import java.util.LinkedList;
 //import java.net.*;
 //import java.net.HttpClient;
 //import java.net.http.HttpRequest;
@@ -37,10 +39,11 @@ public class Runner {
 	}
 
 	public void runLogins(){
-		//goToLoginPage();
+		
+		int action = 0;
 		
         while(true){
-			int action = randomInt(0,3);
+			action = randomInt(0,3);
 			
 			switch(action){
                 case 0:
@@ -60,7 +63,41 @@ public class Runner {
 				e.printStackTrace();
 			}
 		}
-        //driver.quit();
+	}
+	
+	public void runAlerts(){
+		
+		int action = 0;
+		int invalidField = 0;
+		JSONObject alert;
+		JSONObject invalidAlert;
+		
+		
+		while(true){
+			action = randomInt(0,3);
+			
+			switch(action){
+                case 0:
+                	//Post valid alert
+                	postValidAlert();
+                    
+                    break;
+                case 1:
+                	//Post invalid alert
+                	postInvalidAlert();
+                	
+                    break;
+                case 2:
+                	//Delete Alerts
+                	deleteAlerts();
+            }
+			
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public static void main(String[] args){
@@ -134,16 +171,15 @@ public class Runner {
         return (int) (Math.random()* (max - min) + min);
     }
 
-    private JSONObject createRandomJson(String userId){
+    private JSONObject createRandomJson(){
         int alertType = randomInt(1, 6);
         String heading = getAlphaNumericString(10);
         String description = getAlphaNumericString(10);
         String url = getAlphaNumericString(10);
         String imageUrl = getAlphaNumericString(10);
-        // String userId = getAlphaNumericString(10);
         int priceInCents = randomInt(0, 1000000);
 
-        return createJson(alertType, heading, description, url, imageUrl, this.userId ,priceInCents);
+        return createJson(alertType, heading, description, url, imageUrl, userId ,priceInCents);
     }
 
     private JSONObject createJson(int alertType, String heading, String description, String url ,String imageUrl, String userId, int priceInCents){
@@ -163,6 +199,8 @@ public class Runner {
 
         return object;
     }
+    
+    
 
     /*
      * Attepts to post the json object to the api
@@ -189,7 +227,79 @@ public class Runner {
             return null;    //in case of fail return a null object
         }
     }*/
-
+    
+    private void postValidAlert(){
+    	System.out.println("Posting Valid Alert");
+    	JSONObject alert = createRandomJson();
+        postAlert(alert);
+    }
+    
+    private void postInvalidAlert(){
+    	System.out.println("Posting Alert With Invalid ");
+    	JSONObject alert = createRandomJson();
+    	
+    	int invalidAttribute = randomInt(0,7);
+    	
+    	try{
+    		switch(invalidAttribute){
+    		case 0:
+    			System.out.print("Type");
+    			if(randomInt(0,1) == 1){
+    				alert.put("alertType", randomInt(7,100));
+    			}else{
+    				alert.put("alertType", randomInt(-100, 0));
+    			}
+    			break;
+    		case 1:
+    			System.out.print("Heading");
+    			alert.put("heading", "");
+    			break;
+    		case 2: 
+    			System.out.print("Description");
+    			alert.put("description", "");
+    			break;
+    		case 3: 
+    			System.out.print("URL");
+    			alert.put("url", "");
+    			break;
+    		case 4: 
+    			System.out.print("Image URL");
+    			alert.put("imageUrl", "");
+    			break;
+    		case 5: 
+    			System.out.print("userId");
+    			alert.put("userId", "Bad Id");
+    			break;
+    		case 6: 
+    			System.out.print("Price");
+    			alert.put("alertType", randomInt(-100, 0));
+    			break;
+    		}
+    	} catch (JSONException e) {
+    		e.printStackTrace();
+    	}
+    	
+    	postAlert(alert);
+    }
+    
+    private void postAlert(JSONObject alert){
+    	//TODO: SEND JSONOBJECT TO API
+    	return;
+    }
+    
+    public List<JSONObject> getAlerts(){
+    	System.out.println("Getting Alerts");
+    	List<JSONObject> alerts = new LinkedList<JSONObject>();
+    	//TODO: SEND GET REQUEST TO API
+    	
+    	return alerts;
+    }
+    
+    public void deleteAlerts(){
+    	System.out.println("Deleting Alerts");
+    	//TODO: SEND DELETE REQUEST TO API
+    	return;
+    }
     /*
      * Sends a delete request with the given user Id to the marketAlertUm api
      */
