@@ -8,6 +8,8 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
+
 //import java.net.*;
 //import java.net.HttpClient;
 //import java.net.http.HttpRequest;
@@ -32,9 +34,7 @@ public class Runner {
 	}
 
 	public void runLogins(){
-        //boolean repeat = true;
-        for(int i=0; i<10; i++){
-		//while(repeat){
+        while(true){
 			int action = randomInt(0,3);
 			
 			switch(action){
@@ -46,23 +46,24 @@ public class Runner {
                 case 1:
                 	goToLoginPage();
                     badLogin();
-                    logout();
                     break;
-                /*case 2:
-                	this.driver.quit();
-                    repeat = false;
-                    break;*/
-                    /*
-                case 5:
-                    goToLoginPage();
-                    break;
-                case 6:
-                    goToLoginPage();
-                    break;
-                */
             }
+			
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
-        driver.quit();
+        //driver.quit();
+	}
+	
+	public static void main(String[] args){
+		String userId = "21ed7a53-ff36-4daf-8da0-c8b66b11c0de";
+		String driverPath = "C:\\ChromeDriver\\chromedriver.exe";
+		
+		Runner runner = new Runner(userId, driverPath);
+		runner.runLogins();
 	}
 
 	private void goToLoginPage(){
