@@ -10,6 +10,9 @@ import org.json.JSONObject;
 
 
 
+
+
+
 //import java.net.*;
 //import java.net.HttpClient;
 //import java.net.http.HttpRequest;
@@ -34,6 +37,8 @@ public class Runner {
 	}
 
 	public void runLogins(){
+		//goToLoginPage();
+		
         while(true){
 			int action = randomInt(0,3);
 			
@@ -72,11 +77,13 @@ public class Runner {
 
 	// Logs in with a correct user Id
 	public void goodLogin(){
+		System.out.println("Good login at: " + System.currentTimeMillis());
 		login(userId);
 	}
 
 	// Logs in with a bad user Id
 	public void badLogin(){
+		System.out.println("Bad login at: " + System.currentTimeMillis());
 		login("Bad Id");
 	}
 	
@@ -88,6 +95,7 @@ public class Runner {
 
 	// Logs out from the system
 	public void logout(){
+		System.out.println("Logout at: " + System.currentTimeMillis());
 		marketAlertList.logOut();
 	}
     
