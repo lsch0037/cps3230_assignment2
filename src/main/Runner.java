@@ -5,21 +5,20 @@ import Pages.*;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.json.HTTP;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
-
-
-
-
-
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.LinkedList;
-//import java.net.*;
-//import java.net.HttpClient;
-//import java.net.http.HttpRequest;
-//import java.net.http.HttpResponse;
-//import java.net.http.HttpRequest.BodyPublishers;
 import java.util.List;
 
 public class Runner {
@@ -27,6 +26,8 @@ public class Runner {
 	private WebDriver driver;
 	private MarketAlertLogin marketAlertLogin;
 	private MarketAlertList marketAlertList;
+	//private URL url;
+	//private HttpURLConnection con;
 
 	public Runner(String userId, String chromeDriverPath){
         //set path to ChromeDriver executable
@@ -105,8 +106,42 @@ public class Runner {
 		String driverPath = "C:\\ChromeDriver\\chromedriver.exe";
 		
 		Runner runner = new Runner(userId, driverPath);
-		runner.runLogins();
+		System.out.println("Created Runner");
+		
+		JSONObject alert = runner.createRandomJson();
+		try {
+			runner.testPostAlert(alert);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
+	
+	public void testPostAlert(JSONObject alert) throws Exception{
+		
+    	URL url = new URL ("https://api.marketalertum.com/Alert");
+    	HttpURLConnection con = (HttpURLConnection)url.openConnection();
+    	con.setRequestMethod("POST");
+    	con.setRequestProperty("Content-Type", "application/json");
+    	con.setRequestProperty("Accept", "application/json");
+    	con.setDoOutput(true);
+    	
+    	String jsonInputString = alert.toString();
+    	
+    	try(OutputStream os = con.getOutputStream()) {
+    	    byte[] input = jsonInputString.getBytes("utf-8");
+    	    os.write(input, 0, input.length);			
+    	}
+    	
+    	try(BufferedReader br = new BufferedReader(
+    			  new InputStreamReader(con.getInputStream(), "utf-8"))) {
+    			    StringBuilder response = new StringBuilder();
+    			    String responseLine = null;
+    			    while ((responseLine = br.readLine()) != null) {
+    			        response.append(responseLine.trim());
+    			    }
+    			    System.out.println(response.toString());
+    			}
+    }
 
 	private void goToLoginPage(){
 		driver.get("https://www.marketalertum.com/Alerts/login");
@@ -282,9 +317,47 @@ public class Runner {
     	postAlert(alert);
     }
     
-    private void postAlert(JSONObject alert){
+    
+    
+    //https://www.baeldung.com/httpurlconnection-post
+    public void postAlert(JSONObject alert){
     	//TODO: SEND JSONOBJECT TO API
-    	return;
+    	try{
+    		URL url = new URL ("https://www.marketalertum.com/Alert");
+			HttpURLConnection con = (HttpURLConnection)url.openConnection();
+			
+			con.setRequestMethod("POST");
+			con.setRequestProperty("Content-Type","application/json");
+			con.setRequestProperty("Accept", "application/json");
+			con.setDoOutput(true);
+			
+			//String jsonInputString = alert.toString();
+			String jsonInputString = "{\"name\": \"Upendra\", \"job\": \"Programmer\"}";
+			
+			OutputStream os = con.getOutputStream();
+			byte[] input = jsonInputString.getBytes("utf-8");
+			os.write(input, 0, input.length);		
+			//os.close();
+			
+			//BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"));
+			
+			InputStream is = con.getInputStream();
+			InputStreamReader isr = new InputStreamReader(is, "utf-8");
+			BufferedReader br = new BufferedReader(isr);
+			
+			/*StringBuilder response = new StringBuilder();
+			String responseLine = null;
+			while ((responseLine = br.readLine()) != null) {
+				response.append(responseLine.trim());
+			}
+			System.out.println(response.toString());*/
+			
+			//return HTTP.toJSONObject(response.toString());
+			
+    	}catch(Exception e){
+    		e.printStackTrace();
+    	}
+    	//return null;
     }
     
     public List<JSONObject> getAlerts(){
@@ -300,6 +373,11 @@ public class Runner {
     	//TODO: SEND DELETE REQUEST TO API
     	return;
     }
+    
+    public void getEventsLog(){
+    	
+    }
+    
     /*
      * Sends a delete request with the given user Id to the marketAlertUm api
      */
