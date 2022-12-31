@@ -4,16 +4,18 @@ GLOBAL {
 	}
 	
 	EVENTS {
-		badLogin() = {Runner.badLogin()}
-		goodLogin() = {Runner.goodLogin()}
-		logout() = {Runner.logout()}
+		badLogin() = {RunnerLogins.badLogin()}
+		goodLogin() = {RunnerLogins.goodLogin()}
+		logout() = {RunnerLogins.logout()}
+		%%loginCheck() = {RunnerLogins.loginCheck()}
 	}
 	
 	PROPERTY logins{
 		STATES {
 			BAD {
 				doubleLogin
-				doubleLogout
+				doubleLogout		
+				%%badLoginCheck
 			}
 			NORMAL {
 				loggedIn
@@ -26,11 +28,15 @@ GLOBAL {
 		TRANSITIONS {
 			loggedOut -> loggedOut [badLogin()\\System.out.println("Unsuccessful Login attempt.");]
 			loggedOut -> loggedIn [goodLogin()\\System.out.println("Successfully Logged In.");]
-			loggedOut -> doubleLogout [logout()\\System.out.println("Double Logout");]
+			loggedOut -> doubleLogout [logout()\\System.out.println("ERROR Double Logout");]
+			%%loggedOut -> badLoginCheck [loginCheck()\ loginCheck() == true \ System.out.println("ERROR Should be logged out");]
+			%%loggedOut -> loggedOut [loginCheck()\ loginCheck() == false \ System.out.println("System is logged out");]
 			
-			loggedIn -> doubleLogin [goodLogin()\\System.out.println("Double Login");]
-			loggedIn -> doubleLogin [badLogin()\\System.out.println("Double Login");]
+			loggedIn -> doubleLogin [goodLogin()\\System.out.println("ERROR Double Login");]
+			loggedIn -> doubleLogin [badLogin()\\System.out.println("ERROR Double Login");]
 			loggedIn -> loggedOut [logout()\\System.out.println("Successfully Logged Out");]
+			%%loggedIn -> badLoginCheck [loginCheck()\ loginCheck() == false \ System.out.println("ERROR Should be logged in");]
+			%%loggedIn -> loggedIn [loginCheck()\ loginCheck() == true \ System.out.println("System is logged in");]
 		}
 	}
 }

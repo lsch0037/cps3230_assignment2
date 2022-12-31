@@ -4,5 +4,5 @@
 bin
 src/main/aspects
 src/main/larva
-src/main/output_logins.txt
-src/main_diag_logins.txt
+*.class
+*.txt

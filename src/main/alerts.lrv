@@ -1,0 +1,35 @@
+GLOBAL {
+	VARIABLES {
+		int alerts = 0;
+	}
+	
+	EVENTS {
+		postValidAlert() = {RunnerAlerts.postValidAlert()}
+		postInvalidAlert() = {RunnerAlert.postInvalidAlert()}
+		deleteAlerts() = {RunnerAlerts.deleteAlerts()}
+	}
+	
+	PROPERTY alerts{
+		STATES {
+			BAD {
+				invalidNumOfAlerts
+			}
+			NORMAL {
+				empty
+			}
+			STARTING{
+				hasAlerts
+			}
+		}
+		
+		TRANSITIONS {
+			empty -> hasAlerts[postValidAlert()\\alerts++; System.out.println("Posted Valid Alert");]
+			empty -> empty[postInvalidAlert()\\System.out.println("Invalid Post Attempt");]
+			empty -> empty[deleteAlerts()\\System.out.println("Deleted empty alerts");]
+			
+			hasAlerts -> hasAlerts[postValidAlert()\\alerts++; System.out.println("Posted another Valid Alert");]
+			hasAlerts -> hasAlerts[postInvalidAlert()\\System.out.println("Attempted to post another Invalid Alert");]
+			hasAlerts -> empty[deleteAlerts()\\alerts = 0; System.out.println("Deleted non-empty alerts");]
+		}
+	}
+}

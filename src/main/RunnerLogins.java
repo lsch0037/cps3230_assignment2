@@ -75,4 +75,8 @@ public class RunnerLogins {
 		System.out.println("Logout at: " + System.currentTimeMillis());
 		marketAlertList.logOut();
 	}
+	
+	public boolean loginCheck(){
+		return marketAlertList.isOnAlertsPage();
+	}
 }

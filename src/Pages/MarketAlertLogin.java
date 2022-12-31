@@ -8,13 +8,6 @@ import org.openqa.selenium.support.FindBy;
 //Page object class for the marketAlertUm login page
 public class MarketAlertLogin extends PageObject {
 
-    //@FindBy(xpath = "//input[@name='UserId']")
-    //private WebElement textInput;
-
-    //@FindBy(xpath = "//input[@type='submit']")
-    //private WebElement submitButton;
-
-
     public MarketAlertLogin(WebDriver driver){
         super(driver);
     }
@@ -35,6 +28,7 @@ public class MarketAlertLogin extends PageObject {
      * Verifies that the user is in fact on the Login page by comparing the url to that expected on the Login page
      * Returns true if the url matches, false otherwise
      */
+    //TODO: CHECK IF NECESSARY
     public boolean isOnLogInPage(){
         if(driver.getCurrentUrl().equals("https://www.marketalertum.com/Alerts/Login"))
             return true;

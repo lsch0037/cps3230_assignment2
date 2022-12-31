@@ -1,6 +1,5 @@
 package Pages;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import org.openqa.selenium.By;
@@ -34,26 +33,8 @@ public class MarketAlertList extends PageObject{
         return driver.findElements(By.tagName("tbody"));
     }
 
-    // TODO: REPLACE ALL INSTANCES OF getAlerts() WITH THIS
-    /*
-    public List<MarketAlertItem> getAlertsAsPageObjects(){
-        //refresh to ensure the information is up to date
-        driver.navigate().refresh();
-
-        //return alert element
-        List<WebElement> items = driver.findElements(By.tagName("tbody"));
-
-        List<MarketAlertItem> pgObjs = new LinkedList<MarketAlertItem>();
-        for(WebElement item : items){
-            pgObjs.add(new MarketAlertItem(this.driver, item));
-        }
-
-        return pgObjs;
-    }*/
-
-    // Press the LogOut button
+    // Logs out of the system
     public void logOut(){
-        // TODO: FIND LOGOUT BUTTON ON PAGE
-        // CLICK BUTTON
+    	driver.get("https://www.marketalertum.com/Home/Logout");
     }
 }

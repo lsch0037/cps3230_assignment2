@@ -15,6 +15,20 @@ public class RunnerAlerts {
 	public RunnerAlerts(String userId){
 		this.userId = userId;
 	}
+	
+	public void testPostAlert(){
+		JSONObject alert = createValidAlert();
+		
+		JSONObject response = postAlert(alert);
+		
+		System.out.println(response.toString());
+	}
+	
+	public void testDeleteAlerts(){
+		JSONObject response = deleteAlerts();
+		
+		System.out.println(response.toString());
+	}
 
 	public void run(){	
 		int action = 0;
@@ -139,68 +153,29 @@ public class RunnerAlerts {
     	return alert;
     }
 	
-	public JSONObject postAlert(JSONObject alert) throws Exception{
-		System.out.println("Posting Alerts");
-    	URL url = new URL ("https://api.marketalertum.com/Alert");
-    	HttpURLConnection con = (HttpURLConnection)url.openConnection();
-    	con.setRequestMethod("POST");
-    	con.setRequestProperty("Content-Type", "application/json");
-    	con.setRequestProperty("Accept", "application/json");
-    	con.setDoOutput(true);
-    	
-    	String jsonInputString = alert.toString();
-    	
-    	try(OutputStream os = con.getOutputStream()) {
-    	    byte[] input = jsonInputString.getBytes("utf-8");
-    	    os.write(input, 0, input.length);		
-    	    os.close();
-    	}
-    	
-    	StringBuilder response;
-    	try(BufferedReader br = new BufferedReader(
-    			  new InputStreamReader(con.getInputStream(), "utf-8"))) {
-    			    response = new StringBuilder();
-    			    String responseLine = null;
-    			    while ((responseLine = br.readLine()) != null) {
-    			        response.append(responseLine.trim());
-    			    }
-    			    br.close();
-    			}
-    	
-    	con.disconnect();
-    	return new JSONObject(response.toString());
-    }
+	public JSONObject postAlert(JSONObject alert){
+		System.out.println("Posting Alert");
+		try {
+			return marketAlertApiCall("https://api.marketalertum.com/Alert","POST", alert);
+		} catch (Exception e) {
+			System.out.println("Failed to post Alert");
+			e.printStackTrace();
+			return null;
+		}
+	}
 	
-	public JSONObject deleteAlerts() throws Exception{
-    	System.out.println("Deleting the alerts");
-    	URL url = new URL ("https://api.marketalertum.com/Alert?userid=" + userId);
-    	HttpURLConnection con = (HttpURLConnection)url.openConnection();
-    	con.setRequestMethod("DELETE");
-    	con.setDoOutput(true);
-    	
-    	String jsonInputString = "";
-    	
-    	try(OutputStream os = con.getOutputStream()) {
-    	    byte[] input = jsonInputString.getBytes("utf-8");
-    	    os.write(input, 0, input.length);		
-    	    os.close();
-    	}
-    	
-    	StringBuilder response;
-    	try(BufferedReader br = new BufferedReader(
-    			  new InputStreamReader(con.getInputStream(), "utf-8"))) {
-    			    response = new StringBuilder();
-    			    String responseLine = null;
-    			    while ((responseLine = br.readLine()) != null) {
-    			        response.append(responseLine.trim());
-    			    }
-    			    br.close();
-    			    
-    			}
-    	con.disconnect();
-    	return new JSONObject(response.toString());
-    }
+	public JSONObject deleteAlerts(){
+		System.out.println("Deleting Alerts");
+		try {
+			return marketAlertApiCall("https://api.marketalertum.com/Alert?userid=" + userId, "DELETE", null);
+		} catch (Exception e) {
+			System.out.println("Failed to delete Alerts");
+			e.printStackTrace();
+			return null;
+		}
+	}
 	
+	//TODO: CONVERT THIS TO USE MARKLETALERTAPICALL
 	public JSONObject getEventsLog() throws Exception{
     	URL url = new URL ("https://api.marketalertum.com/EventsLog/" + userId);
     	HttpURLConnection con = (HttpURLConnection)url.openConnection();
@@ -223,6 +198,7 @@ public class RunnerAlerts {
     	con.disconnect();
     	return new JSONObject(response.toString());
     }
+	
 	
 	private JSONObject marketAlertApiCall(String urlString, String requestMethod, JSONObject alert) throws Exception{
 		URL url = new URL (urlString);
