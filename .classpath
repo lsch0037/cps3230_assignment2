@@ -3,6 +3,8 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk-8.0.352.8-hotspot"/>
 	<classpathentry kind="con" path="org.eclipse.ajdt.core.ASPECTJRT_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/Users/lukas/Downloads/selenium-java-4.7.2/java-json.jar"/>
+	<classpathentry kind="lib" path="C:/Users/lukas/Downloads/selenium-java-4.7.2/java-net-http-request-factory-1.0.1.jar"/>
 	<classpathentry kind="lib" path="C:/Users/lukas/Downloads/selenium-java-4.7.2/selenium-api-4.7.2.jar"/>
 	<classpathentry kind="lib" path="C:/Users/lukas/Downloads/selenium-java-4.7.2/selenium-api-4.7.2-sources.jar"/>
 	<classpathentry kind="lib" path="C:/Users/lukas/Downloads/selenium-java-4.7.2/selenium-chrome-driver-4.7.2.jar"/>
@@ -37,6 +39,10 @@
 	<classpathentry kind="lib" path="C:/Users/lukas/Downloads/selenium-java-4.7.2/selenium-safari-driver-4.7.2-sources.jar"/>
 	<classpathentry kind="lib" path="C:/Users/lukas/Downloads/selenium-java-4.7.2/selenium-support-4.7.2.jar"/>
 	<classpathentry kind="lib" path="C:/Users/lukas/Downloads/selenium-java-4.7.2/selenium-support-4.7.2-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/lukas/Downloads/selenium-java-4.7.2/spring-beans-5.2.4.RELEASE.jar"/>
+	<classpathentry kind="lib" path="C:/Users/lukas/Downloads/selenium-java-4.7.2/spring-core-5.2.4.RELEASE.jar"/>
+	<classpathentry kind="lib" path="C:/Users/lukas/Downloads/selenium-java-4.7.2/spring-jcl-5.2.4.RELEASE.jar"/>
+	<classpathentry kind="lib" path="C:/Users/lukas/Downloads/selenium-java-4.7.2/spring-web-5.2.4.RELEASE.jar"/>
 	<classpathentry kind="lib" path="C:/Users/lukas/Downloads/selenium-java-4.7.2/lib/async-http-client-2.12.3.jar"/>
 	<classpathentry kind="lib" path="C:/Users/lukas/Downloads/selenium-java-4.7.2/lib/async-http-client-netty-utils-2.12.3.jar"/>
 	<classpathentry kind="lib" path="C:/Users/lukas/Downloads/selenium-java-4.7.2/lib/auto-common-1.2.1.jar"/>
@@ -85,11 +91,5 @@
 	<classpathentry kind="lib" path="C:/Users/lukas/Downloads/selenium-java-4.7.2/lib/opentelemetry-semconv-1.19.0-alpha.jar"/>
 	<classpathentry kind="lib" path="C:/Users/lukas/Downloads/selenium-java-4.7.2/lib/reactive-streams-1.0.4.jar"/>
 	<classpathentry kind="lib" path="C:/Users/lukas/Downloads/selenium-java-4.7.2/lib/slf4j-api-2.0.3.jar"/>
-	<classpathentry kind="lib" path="C:/Users/lukas/Downloads/java-json/java-json.jar"/>
-	<classpathentry kind="lib" path="C:/Users/lukas/Downloads/http/java-net-http-request-factory-1.0.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/lukas/Downloads/http/spring-beans-5.2.4.RELEASE.jar"/>
-	<classpathentry kind="lib" path="C:/Users/lukas/Downloads/http/spring-core-5.2.4.RELEASE.jar"/>
-	<classpathentry kind="lib" path="C:/Users/lukas/Downloads/http/spring-jcl-5.2.4.RELEASE.jar"/>
-	<classpathentry kind="lib" path="C:/Users/lukas/Downloads/http/spring-web-5.2.4.RELEASE.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
