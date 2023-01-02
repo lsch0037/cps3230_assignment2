@@ -1,0 +1,58 @@
+GLOBAL{
+	VARIABLES{
+		int alerts = 0;
+	}
+	
+	EVENTS{
+		AlertCreated() = {*.AlertCreated()}
+		AlertsDeleted() = {*.AlertsDeleted()}
+		UserValidLogin() = {*.UserValidLogin()}
+		UserLoggedOut() = {*.UserLoggedOut()}
+		UserViewedAlerts() = {*.UserViewedAlerts()}
+	}
+	
+	PROPERTY prop{
+		STATES{
+			BAD{
+				DoubleLogout
+				DoubleLogin
+				%%LoggedOutViewAlerts
+				%%DeleteEmpty
+				TooManyAlerts
+				ViewedEmptyAlerts
+			}
+			NORMAL{
+				LoggedIn
+			}
+			STARTING{
+				LoggedOut
+			}
+		}
+		
+		TRANSITIONS{
+			LoggedOut -> LoggedOut[AlertCreated()\alerts < 5\alerts++; System.out.println("Alert Created");]
+			LoggedOut -> TooManyAlerts[AlertCreated()\alerts >= 5\ alerts++; System.out.println("ERROR TOO MANY ALERTS");]
+			
+			%%LoggedOut -> LoggedOut[AlertsDeleted()\alerts > 0\alerts = 0; System.out.println("Alerts Deleted");]
+			%%LoggedOut -> DeleteEmpty[AlertsDeleted()\alerts == 0\alerts = 0; System.out.println("ERROR DELETED ALREADY EMPTY ALERTS");]
+			LoggedOut -> LoggedOut[AlertsDeleted()\\alerts = 0; System.out.println("Alerts Deleted");]
+			
+			LoggedOut -> LoggedIn[UserValidLogin()\\System.out.println("User Logged In");]
+			LoggedOut -> DoubleLogout[UserLoggedOut()\\System.out.println("ERROR DOUBLE LOGOUT");]
+			%%LoggedOut -> LoggedOutViewAlerts[UserViewedAlerts()\\System.out.println("ERROR LOGGED OUT USER VIEWED ALERTS");]
+			LoggedOut -> LoggedOut[UserViewedAlerts()\\System.out.println("User Viewed Alerts");]
+			
+			LoggedIn -> LoggedIn[AlertCreated()\alerts < 5\alerts++; System.out.println("Alert Created");]
+			LoggedIn -> TooManyAlerts[AlertCreated()\alerts >= 5\ alerts++; System.out.println("ERROR TOO MANY ALERTS");]
+			
+			%%LoggedIn -> LoggedIn[AlertsDeleted()\alerts > 0\alerts = 0; System.out.println("Alerts Deleted");]
+			%%LoggedIn -> DeleteEmpty[AlertsDeleted()\alerts == 0\alerts = 0; System.out.println("ERROR DELETED ALREADY EMPTY ALERTS");]
+			LoggedIn -> LoggedIn[AlertsDeleted()\\alerts = 0; System.out.println("Alerts Deleted");]
+			
+			LoggedIn -> LoggedOut[UserLoggedOut()\\System.out.println("User Logged Out");]
+			LoggedIn -> DoubleLogin[UserValidLogin()\\System.out.println("ERROR DOUBLE LOGIN");]
+			LoggedIn -> LoggedIn[UserViewedAlerts()\alerts > 0\System.out.println("User viewed Alerts");]
+			LoggedIn -> ViewedEmptyAlerts[UserViewedAlerts()\alerts < 1\System.out.println("ERROR USER VIEWED EMPTY ALERTS");]
+		}
+	}
+}

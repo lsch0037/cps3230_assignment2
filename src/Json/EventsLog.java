@@ -10,16 +10,8 @@ public class EventsLog {
 	public SystemState systemState;
 	
 	public class SystemState {
-		String userId;
-		boolean loggedIn;
-		List<Alert> alerts;
+		public String userId;
+		public boolean loggedIn;
+		public Alert alerts[];
 	}
-	
-	/*public EventLog(String id, String timestamp, int eventLogType, String userId, SystemState systemState) {
-		this.id = id;
-		this.timestamp = timestamp;
-		this.eventLogType = eventLogType;
-		this.userId = userId;
-		this.systemState = systemState;
-	}*/
 }

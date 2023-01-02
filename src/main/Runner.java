@@ -12,45 +12,77 @@ import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 
 import Json.Alert;
 import Json.EventsLog;
+import Json.EventsLog.SystemState;
+import Pages.MarketAlertList;
+import Pages.MarketAlertLogin;
 
 import com.google.gson.Gson;
 
-public class RunnerAlerts {
+public class Runner {
 	private String userId;
+	private WebDriver driver;
+	private MarketAlertLogin marketAlertLogin;
+	private MarketAlertList marketAlertList;
+
 	private Gson gson;
 	
-	public RunnerAlerts(String userId){
+	public Runner(String userId, String chromeDrvierPath){
+		//set path to ChromeDriver executable
+        System.setProperty("webdriver.chrome.driver", chromeDrvierPath);
+		
 		this.userId = userId;
+		this.driver = new ChromeDriver();
+		this.marketAlertLogin = new MarketAlertLogin(driver);
+		this.marketAlertList = new MarketAlertList(driver);
+	
 		this.gson = new Gson();
 	}
 
 	public void run(){	
+		boolean loggedIn = false;
 		
 		while(true){
 			
-			switch(Util.randomInt(0,4)){
-                case 0:
-                	//Post valid alert
-                	postValidAlert();
-                    break;
-                    
-                case 1:
-                	//Post invalid alert
-                	postInvalidAlert();
-                    break;
-                    
-                case 2:
-                	//Delete Alerts
-					deleteAlerts();
-					break;
-				
-                case 3:
-                	EventsLog[] events = getEventsLog();
-                	break;
+			switch(Util.randomInt(0,6)){
+			case 0:
+				//Valid login
+				if(!loggedIn){
+					goToLoginPage();
+					goodLogin();
+				}
+				break;
+			case 1:
+				//Invalid Login
+				if(!loggedIn){
+					goToLoginPage();
+					badLogin();
+				}
+				break;
+			case 2:
+				//Logout
+				if(loggedIn)
+					logout();
+				break;
+            case 3:
+                //Post valid alert
+                postValidAlert();
+                break; 
+            case 4:
+                //Post invalid alert
+                postInvalidAlert();
+                break;  
+            case 5:
+                //Delete Alerts
+				deleteAlerts();
+				break;
             }
+			
+			checkEventsLog();
 			
 			try {
 				Thread.sleep(1000);
@@ -58,6 +90,34 @@ public class RunnerAlerts {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	private void goToLoginPage(){
+		driver.get("https://www.marketalertum.com/Alerts/login");
+	}
+
+	// Logs in with a correct user Id
+	public void goodLogin(){
+		System.out.println("Good login at: " + System.currentTimeMillis());
+		login(userId);
+	}
+
+	// Logs in with a bad user Id
+	public void badLogin(){
+		System.out.println("Bad login at: " + System.currentTimeMillis());
+		login("Bad Id");
+	}
+	
+	// Attempts to log into the system with the given userId
+	private void login(String userId){
+		marketAlertLogin.inputUserId(userId);
+		marketAlertLogin.submit();
+	}
+
+	// Logs out from the system
+	public void logout(){
+		System.out.println("Logout at: " + System.currentTimeMillis());
+		marketAlertList.logOut();
 	}
 	
 	private Alert createValidAlert(){
@@ -87,7 +147,7 @@ public class RunnerAlerts {
 	public String postInvalidAlert(){
 		System.out.println("Posting Invalid Alert");
 		Alert alert = createValidAlert();
-    	alert.setPostedBy("Bad Id");
+    	alert.postedBy = "Bad Id";
     	
     	try{
     		return postAlert(alert);
@@ -115,9 +175,8 @@ public class RunnerAlerts {
 		}
 	}
 	
-	//TODO: GET THE EVENTS LOG CALL TO WORK
 	public EventsLog[] getEventsLog(){
-		System.out.println("Getting Events Log");
+		//System.out.println("Getting Events Log");
 		try {
 			String response = marketAlertApiCall("https://api.marketalertum.com/EventsLog/" + userId, "GET", "");
 			return gson.fromJson(response, EventsLog[].class);
@@ -155,13 +214,12 @@ public class RunnerAlerts {
     		}
 		}
     	
-    	System.out.println("ResponseCode: " + con.getResponseCode());
+    	//System.out.println("ResponseCode: " + con.getResponseCode());
     	
     	StringBuilder response = new StringBuilder();
     	
     	try(BufferedReader br = new BufferedReader(
     			  new InputStreamReader(con.getInputStream(), "utf-8"))) {
-    			    //response = new StringBuilder();
     			    String responseLine = null;
     			    while ((responseLine = br.readLine()) != null) {
     			        response.append(responseLine.trim());
@@ -171,8 +229,70 @@ public class RunnerAlerts {
     	
     	con.disconnect();
  
-    	System.out.println("Response:" + response.toString());
+    	//System.out.println("Response:" + response.toString());
     	
     	return response.toString();
+	}
+	
+	public int getNumOfAlerts(){
+		EventsLog events[]= getEventsLog();
+		
+		if(events.length == 0)
+			return 0;
+		
+		EventsLog lastEvent = events[events.length - 1];
+
+		return lastEvent.systemState.alerts.length;
+	}
+	
+	public void checkEventsLog(){
+		EventsLog events[]= getEventsLog();
+		
+		if(events.length == 0)
+			return;
+		
+		EventsLog lastEvent = events[events.length - 1];
+		int type = lastEvent.eventLogType;
+		
+		switch(type){
+		case 0:
+			AlertCreated();
+			break;
+		case 1:
+			AlertsDeleted();
+			break;
+		case 5:
+			UserValidLogin();
+			break;
+		case 6:
+			UserLoggedOut();
+			break;
+		case 7:
+			UserViewedAlerts();
+			break;
+		default:
+			System.out.println("Unknown Event Type: " + type);
+			break;
+		}
+	}
+	
+	public void AlertCreated(){
+		System.out.println("Observed Alert Created");
+	}
+	
+	public void AlertsDeleted(){
+		System.out.println("Observed Alert Deleted");
+	}
+	
+	public void UserValidLogin(){
+		System.out.println("Observed User Valid Login");
+	}
+	
+	public void UserLoggedOut(){
+		System.out.println("Observed User Logout");
+	}
+	
+	public void UserViewedAlerts(){
+		System.out.println("Observed user Viewed Alerts");
 	}
 }
