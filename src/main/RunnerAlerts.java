@@ -1,6 +1,8 @@
 package main;
 
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -129,37 +131,48 @@ public class RunnerAlerts {
 	private String marketAlertApiCall(String urlString, String requestMethod, String alertJson) throws Exception{
 		URL url = new URL (urlString);
     	HttpURLConnection con = (HttpURLConnection)url.openConnection();
-    	
+    	con.setReadTimeout(10000);
+    	con.setConnectTimeout(15000);
     	con.setRequestMethod(requestMethod);
     	con.setDoOutput(true);
-    	con.setReadTimeout(1000);
-    	con.setConnectTimeout(1000);
+    	con.setDoInput(true);
     	
-    	con.setRequestProperty("Content-Type", "application/json");
-		con.setRequestProperty("Accept", "application/json");
-		
-		con.connect();
-	
-		try(OutputStream os = con.getOutputStream()) {
-			byte[] inBytes = alertJson.getBytes("utf-8");
-			os.write(inBytes, 0, inBytes.length);
-			os.close();
+    	
+    	if(requestMethod == "POST"){
+    		
+    		con.setRequestProperty("Content-Type", "application/json");
+    		con.setRequestProperty("Accept", "application/json");
+    	
+    		try(OutputStream os = con.getOutputStream()) {
+    			byte[] inBytes = alertJson.getBytes("utf-8");
+    			os.write(inBytes, 0, inBytes.length);
+    			os.close();
+    		}catch(IOException e){
+    			System.out.println("Failed to Write to Stream");
+    			e.printStackTrace();
+    			con.disconnect();
+    			return "";
+    		}
 		}
     	
-    	StringBuilder response;
+    	System.out.println("ResponseCode: " + con.getResponseCode());
+    	
+    	StringBuilder response = new StringBuilder();
+    	
     	try(BufferedReader br = new BufferedReader(
     			  new InputStreamReader(con.getInputStream(), "utf-8"))) {
-    			    response = new StringBuilder();
+    			    //response = new StringBuilder();
     			    String responseLine = null;
     			    while ((responseLine = br.readLine()) != null) {
     			        response.append(responseLine.trim());
     			    }
     			    br.close();
     			}
+    	
+    	con.disconnect();
  
     	System.out.println("Response:" + response.toString());
     	
-    	con.disconnect();
     	return response.toString();
 	}
 }
