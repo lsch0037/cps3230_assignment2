@@ -46,41 +46,51 @@ public class Runner {
 	public void run(){	
 		boolean loggedIn = false;
 		
+		deleteAlerts();
+		
 		while(true){
 			
-			switch(Util.randomInt(0,6)){
+			switch(Util.randomInt(0,5)){
 			case 0:
 				//Valid login
 				if(!loggedIn){
+					//UNCOMMENT THE LINE BELOW ONLY FOR TESTING PURPOSES ONLY
+					UserValidLogin();
+					
 					goToLoginPage();
 					goodLogin();
+					loggedIn = true;
 				}
 				break;
+			
 			case 1:
-				//Invalid Login
-				if(!loggedIn){
-					goToLoginPage();
-					badLogin();
+				//Logout
+				if(loggedIn){
+					logout();
+					loggedIn = false;
 				}
 				break;
-			case 2:
-				//Logout
-				if(loggedIn)
-					logout();
-				break;
+            case 2:
             case 3:
                 //Post valid alert
                 postValidAlert();
-                break; 
+                break;
             case 4:
-                //Post invalid alert
-                postInvalidAlert();
-                break;  
-            case 5:
                 //Delete Alerts
 				deleteAlerts();
 				break;
             }
+			/*case 1:
+			//Invalid Login
+			if(!loggedIn){
+				goToLoginPage();
+				badLogin();
+			}
+			break;*/
+			/*case 4:
+            //Post invalid alert
+            postInvalidAlert();
+            break;*/
 			
 			checkEventsLog();
 			
@@ -98,7 +108,7 @@ public class Runner {
 
 	// Logs in with a correct user Id
 	public void goodLogin(){
-		System.out.println("Good login at: " + System.currentTimeMillis());
+		System.out.println("User Logging in ");
 		login(userId);
 	}
 
@@ -116,7 +126,7 @@ public class Runner {
 
 	// Logs out from the system
 	public void logout(){
-		System.out.println("Logout at: " + System.currentTimeMillis());
+		System.out.println("User logging out");
 		marketAlertList.logOut();
 	}
 	
@@ -152,7 +162,7 @@ public class Runner {
     	try{
     		return postAlert(alert);
     	}catch(Exception e){
-    		System.out.println("Failed to Post as expected");
+    		System.out.println("Failed to read Response as expected");
     		return "";
     	}
 	}
@@ -176,7 +186,6 @@ public class Runner {
 	}
 	
 	public EventsLog[] getEventsLog(){
-		//System.out.println("Getting Events Log");
 		try {
 			String response = marketAlertApiCall("https://api.marketalertum.com/EventsLog/" + userId, "GET", "");
 			return gson.fromJson(response, EventsLog[].class);
